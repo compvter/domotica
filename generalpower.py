@@ -13,34 +13,34 @@ lastquery=0
 
 
 def serialread():  #Continuous loop to read serial
-		global blink
-		while True:
-			line=ser.readline()
-			serRead=line.decode('utf-8')
+	global blink
+	while True:
+		line=ser.readline()
+		serRead=line.decode('utf-8')
 
-			if serRead == "b\r\n":                                  #Start of frame
-				blink = blink + 1
-				print(blink)
+		if serRead == "b\r\n":                                  #Start of frame
+			blink = blink + 1
+			print(blink)
 
 def failsafe(): #If no web reading in last 15 seconds, delete data
-		while True:
-			global lastquery
-			global blink
-			if time.time() - lastquery > 12:
-				blink=0
-				print("reset")
-			time.sleep(0.1) 
+	while True:
+		global lastquery
+		global blink
+		if time.time() - lastquery > 12:
+			blink=0
+			print("reset")
+		time.sleep(0.1) 
 
 class Web(object):
-		@cherrypy.expose
-		def query(self,reset=0):
-			global blink
-			global lastquery
-			count = blink #Write an actual number if reset
-			if reset == "1":
-				lastquery = time.time()
-				blink=0
-			return str(count)
+	@cherrypy.expose
+	def query(self,reset=0):
+		global blink
+		global lastquery
+		count = blink #Write an actual number if reset
+		if reset == "1":
+			lastquery = time.time()
+			blink=0
+		return str(count)
 
 serialreadThread = threading.Thread(target=serialread)
 serialreadThread.start()
